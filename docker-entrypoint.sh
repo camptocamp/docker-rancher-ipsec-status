@@ -27,10 +27,10 @@ function container_status() {
   loss_percent="$(echo ${ping_stats} | sed -e "s#.\+ \([0-9]\+\)%.\+#\1#")"
 
   cat <<EOF
-ipsec_status{container_name="${name}",host_name="${hostname}",what="min_ping"} ${min_ping}
-ipsec_status{container_name="${name}",host_name="${hostname}",what="avg_ping"} ${avg_ping}
-ipsec_status{container_name="${name}",host_name="${hostname}",what="max_ping"} ${max_ping}
-ipsec_status{container_name="${name}",host_name="${hostname}",what="loss_percent"} ${loss_percent}
+ipsec_status{container_name="${name}",host_name="${host_name}",what="min_ping"} ${min_ping}
+ipsec_status{container_name="${name}",host_name="${host_name}",what="avg_ping"} ${avg_ping}
+ipsec_status{container_name="${name}",host_name="${host_name}",what="max_ping"} ${max_ping}
+ipsec_status{container_name="${name}",host_name="${host_name}",what="loss_percent"} ${loss_percent}
 EOF
   echo >/dev/stderr
 }
