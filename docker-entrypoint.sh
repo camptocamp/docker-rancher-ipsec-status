@@ -42,4 +42,5 @@ while read c; do
 ${data}"
 done <<<"${CONTAINERS}"
 
+echo "Sending data to ${PUSHGATEWAY_URL}" >/dev/stderr
 curl --data-binary @- "${PUSHGATEWAY_URL}/metrics/job/ipsec_status/instance/${INSTANCE}/environment/${ENVIRONMENT}" <<<"${DATA}"
