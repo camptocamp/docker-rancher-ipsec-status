@@ -4,7 +4,7 @@
 JSON=$(curl -s -H "Accept: application/json" "http://rancher-metadata/latest/stacks/ipsec/services/ipsec/containers")
 CONTAINERS=$(jq -r '.[] | .name' <<<"${JSON}")
 ENVIRONMENT=$(curl -s "http://rancher-metadata/latest/self/stack/environment_name")
-INSTANCE=$(curl -s "http://rancher-metadata/latest/self/container/name")
+INSTANCE=$(curl -s "http://rancher-metadata/latest/self/host/name")
 PUSHGATEWAY_URL=${1:-"http://pushgateway.metrics:9091"}
 
 function container_status() {
