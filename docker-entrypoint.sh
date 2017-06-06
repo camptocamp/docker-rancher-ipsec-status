@@ -11,6 +11,8 @@ function container_status() {
   local name="$1"
   local json=$(jq -r ".[] | select(.name == \"${name}\")" <<<"${JSON}")
   local ip=$(jq -r ".primary_ip" <<<"${json}")
+  local host_uuid=$(jq -r ".host_uuid" <<<"${json}")
+  local host_name=$(curl -s "http://rancher-metadata/latest/hosts/${host_uuid}/name")
 
   echo "Getting stats for container ${name} with ip ${ip}" >/dev/stderr
 
@@ -25,10 +27,10 @@ function container_status() {
   loss_percent="$(echo ${ping_stats} | sed -e "s#.\+ \([0-9]\+\)%.\+#\1#")"
 
   cat <<EOF
-ipsec_status{container_name="${name}",what="min_ping"} ${min_ping}
-ipsec_status{container_name="${name}",what="avg_ping"} ${avg_ping}
-ipsec_status{container_name="${name}",what="max_ping"} ${max_ping}
-ipsec_status{container_name="${name}",what="loss_percent"} ${loss_percent}
+ipsec_status{container_name="${name}",host_name="${hostname}",what="min_ping"} ${min_ping}
+ipsec_status{container_name="${name}",host_name="${hostname}",what="avg_ping"} ${avg_ping}
+ipsec_status{container_name="${name}",host_name="${hostname}",what="max_ping"} ${max_ping}
+ipsec_status{container_name="${name}",host_name="${hostname}",what="loss_percent"} ${loss_percent}
 EOF
   echo >/dev/stderr
 }
@@ -43,4 +45,4 @@ ${data}"
 done <<<"${CONTAINERS}"
 
 echo "Sending data to ${PUSHGATEWAY_URL}" >/dev/stderr
-curl --data-binary @- "${PUSHGATEWAY_URL}/metrics/job/ipsec_status/instance/${INSTANCE}/environment/${ENVIRONMENT}" <<<"${DATA}"
+curl -s --data-binary @- "${PUSHGATEWAY_URL}/metrics/job/ipsec_status/instance/${INSTANCE}/environment/${ENVIRONMENT}" <<<"${DATA}"
